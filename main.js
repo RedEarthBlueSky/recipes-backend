@@ -8,10 +8,13 @@ const BasicStrategy = require('passport-http').BasicStrategy;
 const BearerStrategy = require('passport-http-bearer').Strategy;
 const bcrypt = require('bcrypt');
 
-const config = require('./config.json');
+// const config = require('./config.json');
+const nconf = require('./nconf.js');
 const router = require('./router.js');
 const db = require('./models');
 const User = require('./models').models.User;
+
+
 
 const app = koa();
 
@@ -51,12 +54,12 @@ passport.use(new BearerStrategy(
 app.use(passport.initialize());
 app.use(passport.session());
 
-const hostname = config.hostname;
-const port = config.port;
+const HOSTNAME = nconf.get('HOSTNAME');
+const PORT = nconf.get('PORT');
 
 db.connection.on('error', console.error.bind(console, 'connection error on db:'));
 db.connection.once('open', function() {
-  app.listen(config.port, function () {
-    console.log('Server listening on port ' + config.port);
+  app.listen(PORT, function () {
+    console.log('Server listening on port ' + PORT);
   });
 });

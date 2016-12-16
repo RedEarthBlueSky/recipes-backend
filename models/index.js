@@ -3,11 +3,11 @@
 const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
-const config = require('../config.json');
+const nconf = require('../nconf.js');
 
 mongoose.Promise = global.Promise;
 
-mongoose.connect(`mongodb://${config.dbhostname}:${config.dbport}/${config.dbname}`);
+mongoose.connect(`mongodb://${nconf.get('dbhostname')}:${nconf.get('dbport')}/${nconf.get('dbname')}`);
 
 fs.readdirSync(__dirname).filter(function (file) {
   return (file.indexOf('.') !== 0) && (file !== 'index.js');
