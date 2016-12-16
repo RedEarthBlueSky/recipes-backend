@@ -52,25 +52,28 @@ exports.getSpecificRecipe = function* (next) {
       this.status = 200;
       this.body = recipe;
     } else {
-      
+
     }
   } catch (err) {
     if (err.name === 'CastError') {
+      console.log("Falling back to API for recipe", id);
       let recipes = yield axios.get(`/search`, {
-        params: { r: id}
+        params: { r: id }
       }).then(function(res) {
         const recipe = res.data;
-          let newRecipe = {
-            id: id,
-            name: recipe[0].label,
-            image_url: recipe[0].image,
-            ingredients: recipe[0].ingredientLines,
-            calories: recipe[0].calories,
-            url: recipe[0].url
-          }
+        console.log(res);
+        let newRecipe = {
+          id: id,
+          name: recipe[0].label,
+          image_url: recipe[0].image,
+          ingredients: recipe[0].ingredientLines,
+          calories: recipe[0].calories,
+          url: recipe[0].url
+        }
         return newRecipe;
       });
       this.status = 200;
+      if(recipes === []) this.status = 404;
       this.body = recipes;
     } else {
       this.status = 401;
@@ -83,7 +86,7 @@ exports.postRecipe = function* (next) {
   const that = this.request.body;
   const categoriesArr = this.request.body.categories;
   this.type = 'json';
-  
+
   try {
     let recipe = new Recipe ({
       name: that.name,
